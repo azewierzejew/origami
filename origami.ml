@@ -27,18 +27,19 @@ w pozostałych przypadkach 0 razy *)
 let prostokat (x1, y1) (x2, y2) = fun (x, y) -> if nalezy x1 x2 x && nalezy y1 y2 y then 1 else 0
 
 
-(** [odlegosc p1 p2] zwraca odleglość pomiędzy tymi dwoma punktami *)
+(** [odlegosc p1 p2] zwraca odległość pomiędzy tymi dwoma punktami *)
 let odleglosc (x1, y1) (x2, y2) = hypot (x2 -. x1) (y2 -. y1)
 
 
-(** [pole p1 p2 p3] zwraca dwukrotność pola trójkąta o takich wierzchołkach *) 
+(** [pole p1 p2 p3] zwraca dwukrotność skierowanego pola trójkąta o takich wierzchołkach,
+dodatnie jest kiedy wierzchołki są w kolejności zgodnej z ruchem wskazówek zegara *)
 let pole (x1, y1) (x2, y2) (x3, y3) = 
     x1 *. y2 +. x2 *. y3 +. x3 *. y1 -. (x1 *. y3 +. x2 *. y1 +. x3 *. y2)
 
 
 (** [kolko p r] zwraca kartkę, będącą kółkiem domkniętym o środku w punkcie [p] i promieniu [r] *)
 let kolko p r = fun pnt ->
-    if r < 0. then raise (Invalid_argument "Negative radius in [kolko]") else
+    if r < 0. then invalid_arg "Negative radius in [kolko]" else
     if odleglosc p pnt <= r +. epsilon then 1 else 0
 
 (** [odbicie p1 p2 p] zwraca odbicie punktu [p] względem prostej zawierającej [p1] i [p2] *)
@@ -62,7 +63,6 @@ co przebicie kartki przed złożeniem. Po stronie lewej -
 tyle co przed złożeniem plus przebicie rozłożonej kartki w punkcie,
 który nałożył się na punkt przebicia. *)
 let zloz p1 p2 kar = fun p ->
-    if odleglosc p1 p2 < epsilon then raise (Invalid_argument "Points too close in [zloz]") else
     let wyz = pole p1 p2 p in
     if abs_float (wyz /. (odleglosc p1 p2)) < epsilon then kar p else
     if wyz < 0. then 0 else
